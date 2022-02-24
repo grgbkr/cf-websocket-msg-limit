@@ -1,39 +1,54 @@
-# ʕ •́؈•̀) `worker-typescript-template`
+Basic demonstration of observed size limits on WebSocket message on CloudFlare workers.
 
-A batteries included template for kick starting a TypeScript Cloudflare worker project.
+Run the Cloudflare worker in dev mode like:
+`wrangler dev`
 
-## Note: You must use [wrangler](https://developers.cloudflare.com/workers/cli-wrangler/install-update) 1.17 or newer to use this template.
+Then browse to the `index.html` file.  This page has a simple form for sending WebSocket messages of a specified size to the worker.
 
-## 🔋 Getting Started
+When a message is received by the worker's message event listener it logs `message ${Date.now()}`.  The message event listener does nothing else.
 
-This template is meant to be used with [Wrangler](https://github.com/cloudflare/wrangler). If you are not already familiar with the tool, we recommend that you install the tool and configure it to work with your [Cloudflare account](https://dash.cloudflare.com). Documentation can be found [here](https://developers.cloudflare.com/workers/tooling/wrangler/).
+Note that messages longer than 1,100,000 chars will fail.  Either with no log message or with the following error:
 
-To generate using Wrangler, run this command:
-
-```bash
-wrangler generate my-ts-project https://github.com/cloudflare/worker-typescript-template
 ```
+Error: The script will never generate a response. at line 0, col -2
+{
+  "exceptionDetails": {
+    "columnNumber": -2,
+    "exception": {
+      "className": "Error",
+      "description": "Error: The script will never generate a response.",
+      "preview": {
+        "description": "Error: The script will never generate a response.",
+        "entries": null,
+        "overflow": false,
+        "properties": [
+          {
+            "name": "stack",
+            "subtype": null,
+            "type": "string",
+            "value": "Error: The script will never generate a response.",
+            "valuePreview": null
+          },
+          {
+            "name": "message",
+            "subtype": null,
+            "type": "string",
+            "value": "The script will never generate a response.",
+            "valuePreview": null
+          }
+        ],
+        "subtype": "error",
+        "type": "object"
+      },
+      "subtype": "error",
+      "type": "object",
+      "value": null
+    },
+    "lineNumber": 0,
+    "text": "Uncaught (in response)",
+    "url": "undefined"
+  },
+  "timestamp": 1645746147205
+}
 
-### 👩 💻 Developing
-
-[`src/index.ts`](./src/index.ts) calls the request handler in [`src/handler.ts`](./src/handler.ts), and will return the [request method](https://developer.mozilla.org/en-US/docs/Web/API/Request/method) for the given request.
-
-### 🧪 Testing
-
-This template comes with jest tests which simply test that the request handler can handle each request method. `npm test` will run your tests.
-
-### ✏️ Formatting
-
-This template uses [`prettier`](https://prettier.io/) to format the project. To invoke, run `npm run format`.
-
-### 👀 Previewing and Publishing
-
-For information on how to preview and publish your worker, please see the [Wrangler docs](https://developers.cloudflare.com/workers/tooling/wrangler/commands/#publish).
-
-## 🤢 Issues
-
-If you run into issues with this specific project, please feel free to file an issue [here](https://github.com/cloudflare/worker-typescript-template/issues). If the problem is with Wrangler, please file an issue [here](https://github.com/cloudflare/wrangler/issues).
-
-## ⚠️ Caveats
-
-The `service-worker-mock` used by the tests is not a perfect representation of the Cloudflare Workers runtime. It is a general approximation. We recommend that you test end to end with `wrangler dev` in addition to a [staging environment](https://developers.cloudflare.com/workers/tooling/wrangler/configuration/environments/) to test things before deploying.
+```
